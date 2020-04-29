@@ -67,4 +67,4 @@ to get meedit you need to have:
 
 then follow the steps in "how_to_get.txt".
 
-- > abra README_Pt.md para ver este arquivo em português.
+- > abra "README_Pt.md" para ver este arquivo em português.
