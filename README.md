@@ -65,4 +65,4 @@ to get meedit you need to have:
 * GCC/G++ compiler 
 * ncurses library
 
-then folow the steps on "how_to_get.txt".
+then follow the steps in "how_to_get.txt".
