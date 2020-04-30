@@ -1,0 +1,75 @@
+#this is a READ ONlY (RO) file
+#you cant change it.
+#Meedit 0.1 2020.04 beta
+
+TIP: use arrow keys to navegate
+in the doc.
+
+Dear user!
+We dont understand very well the
+English language, so if you find
+some issues in the app dialogues
+feel free to report us. Thanks!
+
+This little manual will help you
+to know the basics of Meedit.
+
++ First things first!
+
+Meedit (My Equal EDITor) is a text
+editor made by Equal team to create
+and manipulate C/C++ or simple text
+files. 
+
+Meedit is a part of EQuAL Tool PKG.
+
++ About this version:
+
+As you saw in the beginnig of this
+doc. this the version beta 0.1 
+released in 04 2020.
+
++ Avaliable commands:
+
+#How to use commands:
+start the Meedit command line - (MCL) 
+pressing the [esc] key, type your cmd 
+and press the [return] or [enter] key.
+
+==> help
+opens this RO document.
+
+==> close
+closes the current document.If all 
+docs are closed, closesthe program.
+
+==> save
+saves the document. If the doc.
+in case is a RO file, does noting.
+
+==> save at
+saves the document in a specified 
+name or path.
+
+==> quit
+closes the program if everything is 
+OK.
+
+==> fquit
+closes the program anyway
+
+==> delete
+deletes the current document and 
+creates a new.
+
+#about terms and conditions
+The information about terms and
+conditions of this program can be
+found on our site or GitHub page.
+in short, this is a free software,
+you can freely share or change it
+since you dont hide or remove the
+creator ID.
+
+</> by Technolandia tm 2020.
+(also called EQuAL Team)

@@ -1,0 +1,12 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(){
+    printf("hello world");
+
+return 0;
+}
+
+// typed in Meedit 0.1 demo 
+
+ABCDEFGHIJKLMNOPQRSTUVWXYZ12345678910
