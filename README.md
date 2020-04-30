@@ -19,29 +19,29 @@ start the Meedit command line - (MCL)
 pressing the [esc] key, type your cmd 
 and press the [return] or [enter] key.
 
-==> help
+==> help:
 opens this RO document.
 
-==> close
+==> close:
 closes the current document.If all 
 docs are closed, closesthe program.
 
-==> save
+==> save:
 saves the document. If the doc.
 in case is a RO file, does noting.
 
-==> save at
+==> save at:
 saves the document in a specified 
 name or path.
 
-==> quit
+==> quit:
 closes the program if everything is 
 OK.
 
-==> fquit
+==> fquit:
 closes the program anyway
 
-==> delete
+==> delete:
 deletes the current document and 
 creates a new.
 
