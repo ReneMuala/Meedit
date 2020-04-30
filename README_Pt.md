@@ -14,7 +14,7 @@ salvar e excluir arquivos de texto.
 
 + Comandos disponíveis:
 
--> Como usar comandos:
+- > Como usar comandos:
 inicie a linha de comando Meedit - (MCL)
 pressionando a tecla [esc], digite seu cmd
 e pressione a tecla [return] ou [enter].
