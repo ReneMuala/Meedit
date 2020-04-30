@@ -5,7 +5,7 @@
 //  Created by René Descartes Domingos Muala on 09/04/20.
 //  Copyright © 2020 Equal Team (René Descartes Domingos Muala). All rights reserved.
 //
-
+ 
 #include <stdio.h>
 #include <stdlib.h>
 #include <ncurses.h>
