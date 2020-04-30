@@ -10,7 +10,7 @@ this is the version beta
 
 version features:
 in this version, you can create, modify, 
-save and delete files text files.
+save and delete text files.
 
 + Avaliable commands:
 
