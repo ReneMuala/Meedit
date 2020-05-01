@@ -5,7 +5,7 @@
 //  Created by René Descartes Domingos Muala on 09/04/20.
 //  Copyright © 2020 Equal Team (René Descartes Domingos Muala). All rights reserved.
 //
- 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ncurses.h>
@@ -439,6 +439,14 @@ int SpacesInA(char *Stra){
     return spaces;
 }
 
+
+/// solving a mess
+void es003BS(){
+    edit(KEY_UP);
+    edit(KEY_DOWN);
+    edit(127);
+}
+
 /// enter / return
 void es002(int curX, char *String, char *Line1, char *Line2){
     const char *Str = String;
@@ -825,9 +833,12 @@ void editSup(int limit, int a ,int &lY, int &curX, char *line, int allines, int 
             ignchars++;
         
     } else if (a == 127 || a == KEY_BACKSPACE){
-        if(curX == 0 && lY != 0){
+        if(lY == 0 && ign > 0){
+            es003BS();
+            goto end;
+        } else if(curX == 0 && lY != 0 && ignchars == 0){
             cpstr(line, buffer);
-            lY--;
+                lY--;
             see(false, lY, B2, allines, ign, 0);
             scan(B2);
             SStr(B2, buffer, B3);
@@ -839,14 +850,19 @@ void editSup(int limit, int a ,int &lY, int &curX, char *line, int allines, int 
                 curX = (int)strlen(B2);
             else{
                 curX = getmaxx(win) - (int)strlen(line) - 1;
-                ignchars = (int)strlen(buffer)  - getmaxx(win) + 1;
+                ignchars = (int)strlen(buffer) - getmaxx(win) + 2;
+                if(ignchars > 0)
+                    ignchars--;
             }
             goto end;
         } else {
             es001((curX+ignchars)-1, line);
             cpstr(line, buffer);
             scan(buffer);
-            curX--;
+            if(ignchars > 0)
+                ignchars--;
+            else
+                curX--;
         }
     } else if(a == 10 || a == '\n'){
         es002(curX+ignchars, line, Line1, Line2);
@@ -877,8 +893,9 @@ end:
 
 void edit(int a){
     char ex[100000];
-    static int lY = 0, lX = 0,ign = 0, lines = 0, allines, ignchars = 0;
+    static int lY = 0, lX = 0,ign = 0, lines = 0, allines, ignchars = 0, igNBug;
 restart:
+    igNBug = ignchars;
         if(a == KEY_LEFT){
             if( lX - 1 >= 0)
                 lX--;
@@ -941,7 +958,6 @@ restart:
             }
         }else {
             if(ReadOnly == false){
-                
                 editSup(lines,a, lY,lX, ex, allines, ign, ignchars);
                 if(a == 10)
                     ignchars = 0;
@@ -964,11 +980,19 @@ restart:
     //wattroff(win, COLOR_PAIR(1));
     scan(ex);
     
-    if(strlen(ex) < getmaxx(win))
+    if(strlen(ex) < getmaxx(win)){
         ignchars = 0;
+    }
     
-    if(lX > strlen(ex))
+    if(strlen(ex) < getmaxx(win) && igNBug > 0){
+        if(lX + 1 == getmaxx(win))
+            goto normlX;
+    }
+    
+    if(lX > strlen(ex)){
+    normlX:
         lX = (int)strlen(ex);
+    }
     
     //mvwprintw(win,30, 1,"line: %d | coln: %d", lY,lX);
     //mvwprintw(win,30, 1,"line: %d<%d | coln: %d | IGN: %d | realine: %d | R.line %d>%d", lY,allines, lX, ign, lY+ign, lines, getmaxy(win));

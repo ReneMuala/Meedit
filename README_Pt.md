@@ -1,12 +1,12 @@
 # Meedit
 Um pequeno editor de texto de consola feito
-para criar e manipular C / C ++ ou
+para criar e manipular arquivos C/C++ ou
 arquivos de texto simples.
 
 + Sobre esta versão:
 
 esta é a versão beta
-0.1
+0.1.1.
 
 recursos da versão:
 nesta versão, você pode criar, modificar,
@@ -39,7 +39,7 @@ caminho especificado.
 fecha o programa se tudo estiver bem.
 
 ==> fquit:
-fecha o programa de qualquer maneira
+fecha o programa de qualquer maneira.
 
 ==> delete:
 exclui o documento atual e
@@ -50,14 +50,14 @@ Estamos trabalhando nisso...
 Em suma, este é um software livre,
 você pode compartilhar ou alterar livremente
 desde que você não oculte ou remova o
-ID do criador.
+ID dos criadores.
 
 </> por Technolandia tm 2020.
 (também chamada equipe EQuAL)
 
 # Como obter
 Para obter o meedit, você precisa ter:
-* Compilador GCC / G ++
+* Compilador GCC/G++
 * biblioteca ncurses
 
 siga as etapas em "como_obter.txt".

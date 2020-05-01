@@ -6,11 +6,11 @@ step 1:  move the folder "technolandia_meedit" to your home folder, renaming it 
 
 e.g.: mv technolandia_meedit ~/.technolandia_meedit
 
-step 2: compile "main.c" witch is in the "Meddit" foder, using GCC/G++ compiler with the arguments "-o", "Meedit", "-lncurses".
+step 2: compile "main.cpp" witch is in the "Meddit" foder, using GCC/G++ compiler with the arguments "-o", "Meedit", "-lncurses".
 
 e.g.: g++ Meedit/main.cpp -o Meedit -lncurses
 
 Congratulations!
-Now, you have sucessful created Meedit 0.1 in your machine Have fun!
+Now, you have sucessful created Meedit 0.1.1 in your machine Have fun!
 
 you can run it by typing "./Meedit"

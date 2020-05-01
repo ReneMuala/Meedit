@@ -6,7 +6,7 @@ simple text files.
 + About this version:
 
 this is the version beta 
-0.1.
+0.1.1.
 
 version features:
 in this version, you can create, modify, 
@@ -23,7 +23,7 @@ and press the [return] or [enter] key.
 opens this RO document.
 
 ==> close:
-closes the current document.If all 
+closes the current document. If all 
 docs are closed, closesthe program.
 
 ==> save:
@@ -39,7 +39,7 @@ closes the program if everything is
 OK.
 
 ==> fquit:
-closes the program anyway
+closes the program anyway.
 
 ==> delete:
 deletes the current document and 
@@ -50,7 +50,7 @@ We are working on it...
 In short, this is a free software,
 you can freely share or change it
 since you dont hide or remove the
-creator ID.
+creators ID.
 
 </> by Technolandia tm 2020.
 (also called EQuAL Team)
@@ -65,6 +65,6 @@ to get meedit you need to have:
 * GCC/G++ compiler 
 * ncurses library
 
-then follow the steps in "how_to_get.txt".
+Then follow the steps in "how_to_get.txt".
 
 - > abra "README_Pt.md" para ver este arquivo em português.
