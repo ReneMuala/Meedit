@@ -6,7 +6,7 @@ passo 1: mova a pasta "technolandia_meedit" para a sua pasta home, renomeie-a pa
 
 exemplo: mv technolandia_meedit ~/.technolandia_meedit
 
-etapa 2: compile "main.cpp" que está na pasta "Meddit", usando o compilador GCC/G++ com os argumentos "-o", "Meedit", "-lncurses".
+etapa 2: compile "main.cpp" que está na pasta "Meedit", usando o compilador GCC/G++ com os argumentos "-o", "Meedit", "-lncurses".
 
 exemplo: g++ Meedit/main.cpp -o Meedit -lncurses
 
