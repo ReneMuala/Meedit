@@ -9,7 +9,9 @@ esta é a versão beta
 0.2
 
 Novos recursos:
+
 ==> velocidade de escrita incrementada
+
 ==> sintaxe em caracteres
 
 + Comandos disponíveis:
