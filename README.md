@@ -8,7 +8,9 @@ simple text files.
 this is the version 0.2
 
 New features:
+
 ==> incremented typing velocity
+
 ==> syntax in chars
 
 + Avaliable commands:
