@@ -12,13 +12,14 @@ some issues in the app dialogues
 feel free to report us. Thanks!
 
 This little manual will help you
-to know the basics of Meedit.
+to know the basics of Meedit (#3).
 
 + First things first!
 
 Meedit (My Equal EDITor) is a text
 editor made by Equal team to create
-and manipulate text files.
+and manipulate C/C++ sources  and
+simple text files.
 
 + About this version:
 
@@ -31,6 +32,9 @@ What's new?
 ==> added FOLINE algorithm (fast operable 
 line)
 Now you can type faster than ever!
+
+==> added SINTAX algorithm (syntax checker)
+Now your code looks a little bit more profissional!
 
 + Avaliable commands:
 

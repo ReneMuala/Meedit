@@ -1,4 +1,4 @@
-* Siga estas etapas para criar o Meedit em sua máquina.
+* Siga este guia para criar o Meedit em sua máquina.
 
 NOTA: faça isso depois de instalar o GCC/G++ e ncurses
 

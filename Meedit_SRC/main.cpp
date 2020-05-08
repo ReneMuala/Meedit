@@ -12,13 +12,10 @@
 #include <string.h>
 #include <ctype.h>
 
-//#define bPath "//Users/crses/Meedit/tmp/Meedit.unsaved.txt"
-//#define EPath "//Users/crses/Meedit/Example.txt"
-
 enum modes{Newfile, Normal};
 
 int UsageMode, msg = 0, Change = 0;
-bool ReadOnly = false, onhelp = false;
+bool ReadOnly = false, onhelp = false, sintax = true;
 char UserName[1000],Path[10000],RPath[1000],Hfolder[10000],Cfolder[10000], NDPath[1000], NFile[1000];
 
 struct simpleint {
@@ -29,7 +26,7 @@ struct simpleint hints[4];
 
 WINDOW *win, *lwin;
 
-
+void Process1();
 int StartUp();
 void Setup();
 void edit(int a);
@@ -92,51 +89,24 @@ void Warning(const char *s, char *s2){
     clear();
     attron(COLOR_PAIR(2));
     move(getmaxy(stdscr)-1,0);
-    Sprintw(stdscr, s, 0, 0);
+    Sprintw(stdscr, s, 0, -2);
     attroff(COLOR_PAIR(2));
     if(s2 != NULL){
         attron(COLOR_PAIR(5));
-        Sprintw(stdscr, s2, 0, 0);
+        Sprintw(stdscr, s2, 0, -2);
         attroff(COLOR_PAIR(5));
     }
     refresh();
 }
 
-void Meedit(char command){
+void Meedit(char *command){
     attron(A_BOLD);
-    mvprintw(getmaxy(stdscr)-1,0,"-Meedit 0.1-");
+    mvprintw(getmaxy(stdscr)-1,0,"-Meedit 0.2-");
     attroff(A_BOLD);
     if(ReadOnly == true)
         printw("(RO)");
-    switch (command) {
-        case '>':
-            printw(" ");
-            attron(A_STANDOUT);
-            printw(" >> ");
-            attroff(A_STANDOUT);
-            printw(" ");
-            break;
-        case '<':
-            printw(" ");
-            attron(A_STANDOUT);
-            printw(" << ");
-            attroff(A_STANDOUT);
-            printw(" ");
-            break;
-        case '=':
-            printw(" ");
-            attron(A_STANDOUT);
-            printw(" << ");
-            attroff(A_STANDOUT);
-            printw(" ");
-            attron(A_STANDOUT);
-            printw(" >> ");
-            attroff(A_STANDOUT);
-            printw(" ");
-            break;
-        default:
-            break;
-    }
+    if(command != NULL)
+        Sprintw(stdscr, command, 0, -2);
     refresh();
 }
 
@@ -168,6 +138,29 @@ void cpstr(const char *from, char *to){
     *to = 10; //
     scan(to);
 }
+
+char* GetCut(int pos0, int pos1, const char *in){
+    int a = 0;
+    char buffer[100000], *bp;
+    bp = buffer;
+    
+    while(*in && pos1 >= a){
+        if(a >= pos0){
+            *bp = *in;
+            bp++;
+        }
+        in++;
+        a++;
+    }
+    
+    *bp = 10;
+    scan(bp);
+    
+    bp = buffer;
+    
+    return bp;
+}
+
 void SStr(char *one, char *two, char *result){
     while (*one) {
         *result = *one;
@@ -197,11 +190,94 @@ int linesIn(char *fPath){
     return lines;
 }
 
-int Mirror(char *fromfile, char *tofile){
+bool istab(const char *str){
+    bool tab = false;
+    int a = 0, chances = 0, falls = 0;
+    
+    while (*str) {
+        if(*str == ' ')
+            chances++;
+        else
+            falls++;
+        if(chances == 3 || falls > 0)
+            break;
+        str++;
+        a++;
+    }
+    if(chances == 3 && falls == 0)
+        tab = true;
+    return tab;
+}
+
+bool has10(const char *str){
+    bool has = false;
+    
+    while(*str){
+        if(*str == 10)
+            has = true;
+        str++;
+    }
+    str = 0;
+    return has;
+}
+
+void Exchange1(const char *in, char *ou){
+    int pos = 0;
+    
+    bool _10 = has10(in);
+    
+    while(*in){
+        if(istab(in) == true){
+            *ou = 9;
+            in+=2;
+        } else {
+            *ou = *in;
+        }
+        ou++;
+        in++;
+        pos++;
+        
+    }
+    ou++;
+    *ou = 10;
+    scan(ou);
+    
+    if(_10 == true){
+        ou++;
+        //*ou = 10;
+    }
+}
+
+void Exchange2(const char *in, char *ou){
+    bool _10 = has10(in);
+    while(*in){
+        if(*in == 9){
+            for(int z = 0; z < 3 ; z++){
+                *ou = ' ';
+                ou++;
+            }
+            ou--;
+        } else {
+            *ou = *in;
+        }
+        ou++;
+        in++;
+    }
+    ou++;
+    *ou = 10;
+    scan(ou);
+    
+    if(_10 == true){
+        ou++;
+        //*ou = 10;
+    }
+}
+
+int Mirror(int mode, char *fromfile, char *tofile){
     int status = 0;
     FILE *from, *to;
     int a = 0;
-    char buffer[100000], MSG[50] = {"File cannot be openned"};
+    char buffer[100000], buffer2[100000], MSG[50] = {"File cannot be openned"};
     
     from = fopen(fromfile, "rt");
     to = fopen(tofile, "wt");
@@ -224,10 +300,21 @@ int Mirror(char *fromfile, char *tofile){
         Warning(MSG, tofile);
         goto jump;
     }
+    Clearstring(buffer);
+    Clearstring(buffer2);
     while (a < linesIn(fromfile)) {
         fgets(buffer, 100000, from);
-        fprintf(to, "%s", buffer);
+        if(mode == 1)
+            Exchange1(buffer, buffer2);
+        if(mode == 2)
+            Exchange2(buffer, buffer2);
+        if(mode == 0)
+            fprintf(to, "%s", buffer);
+        else
+            fprintf(to, "%s", buffer2);
         a++;
+        Clearstring(buffer);
+        Clearstring(buffer2);
     }
 jump:
     fclose(from);
@@ -326,43 +413,130 @@ void Changeline(int line, char *string, bool endl){
     }
 }
 
+bool IsIn(char a, char *b){
+    bool is = false;
+    
+    while(*b){
+        if(a == *b){
+            is = true;
+            break;
+        }
+        b++;
+    }
+
+    return is;
+}
+
 void Sprintw(WINDOW *window, const char *s, int at, int y){
+    bool Norm_mode = true;
+    bool Asp = false, single_cmnt = false;
     int a = 0, b = 0, c = 0;
+    char numbers[11] = {"1234567890"}, operators[10] = {"+-*/="}, parentesis[10] = {"{}()[]"}, spchars[20] = {"<>~#@!&\\\'\"."}, ASPS[4] = {"\'\""}, until_s;
+    
     if((int)strlen(s) > getmaxx(window) || at > 0){
         b = 1;
         c = 1;
     }
     
-    while(*s && b < getmaxx(window)){
+    if(y < 0){
+        if(y == -1)
+            y = 1;
+        else
+            y = 0;
+        Norm_mode = false;
+    }
+    
+    while(*s && b < getmaxx(window) && Norm_mode == true){
+        if(a >= at){
+            if(sintax == true && IsIn(*s, ASPS) == true){
+                s--;
+                until_s = *s;
+                s++;
+                if(until_s != '\\'){
+                   if(Asp == true)
+                       Asp = false;
+                   else
+                       Asp = true;
+                }
+                goto same;
+            } else if(IsIn(*s, numbers) == true){
+                s--;
+                until_s = *s;
+                s++;
+                if(sintax == true && (IsIn(until_s, numbers) == true || IsIn(until_s, parentesis) == true || IsIn(until_s, spchars) == true || IsIn(until_s, operators) == true || until_s == ' ' || until_s == 10 || until_s == 27 || a == 0 ) && (Asp == false)){
+                wattron(window, COLOR_PAIR(7));
+                wprintw(window, "%c", *s);
+                wattroff(window, COLOR_PAIR(7));
+                } else {
+                    goto same;
+                }
+            } else if(sintax == true && Asp == false && (IsIn(*s, parentesis) == true) && (Asp == false)){
+                wattron(window, COLOR_PAIR(8));
+                wprintw(window, "%c", *s);
+                wattroff(window, COLOR_PAIR(8));
+            } else if(sintax == true && (IsIn(*s, spchars) == true) && (Asp == false) ){
+                wattron(window, COLOR_PAIR(1));
+                wprintw(window, "%c", *s);
+                wattroff(window, COLOR_PAIR(1));
+            }else if(sintax == true && (IsIn(*s, operators) == true)){
+                if(*s == '/'){
+                    s--;
+                    until_s = *s;
+                    s++;
+                    if(until_s == '/'){
+                        single_cmnt = true;
+                        wprintw(window, "/");
+                    } else
+                        goto same;
+                } else
+                    goto same;
+            } else {
+            same:
+                if(Asp == true || single_cmnt == true)
+                    wattron(window, COLOR_PAIR(1));
+                wprintw(window, "%c", *s);
+                if(Asp == false && single_cmnt == false)
+                    wattroff(window, COLOR_PAIR(1));
+            }
+            b++;
+        }
+        s++;
+        a++;
+}
+    while(*s && b < getmaxx(window) && Norm_mode == false){
         if(a >= at){
             wprintw(window, "%c", *s);
             b++;
         }
         s++;
         a++;
-}
+    }
+    
     if(c == 1){
         wattron(window, A_STANDOUT);
         mvwprintw(window,y,getmaxx(win)-1,"+");
         wattroff(window, A_STANDOUT);
     }
+    wattroff(window, COLOR_PAIR(1));
 }
 
-int see(bool see,int line, char *ex, int &Allines,int ign, int ignchars){
+int see(int see,int line, char *ex, int &Allines,int ign, int ignchars){
     char toprint[100000],buffer[4] = {""},  Paths[100000], tpB[100000];
     strcpy(Paths, Path);
     int lines = 0, limit = linesIn(Paths), PageEnd = getmaxy(win), printed = 0;
     FILE *arch = fopen(Path, "rt");
     int y, x;
-        for(int z = 0 ; z < ign ; z++){
-            fgets(tpB, 100000, arch);
-        }
-
+    for(int z = 0 ; z < ign ; z++){
+        fgets(tpB, 100000, arch);
+    }
     while(!feof(arch)){
         fgets(toprint, 100000, arch);
-        if(see == true){
+        if(see == true || see == 3){
             if(line == lines){
-                Sprintw(win, toprint, ignchars, line);
+                if(see == true){
+                    Sprintw(win, toprint, ignchars, line);
+                } else
+                    Sprintw(win, ex, ignchars, line);
             }
             else {
                 getyx(win, y, x);
@@ -370,7 +544,7 @@ int see(bool see,int line, char *ex, int &Allines,int ign, int ignchars){
             }
         }
         printed++;
-        if(line == lines){
+        if(line == lines && see != 3){
             strcpy(ex, toprint);
         }         lines++;
         if(lines == limit || printed == PageEnd || printed+ign == limit)
@@ -382,7 +556,7 @@ int see(bool see,int line, char *ex, int &Allines,int ign, int ignchars){
     }
     //
     Allines = limit;
-    
+    wrefresh(win);
     fclose(arch);
     return lines;
 }
@@ -520,6 +694,7 @@ void savAtSP(){
         if(a == 410){
             resize();
         } else if(a == 27){
+            edit(410);
             goto endf;
         }else if(a == 127 || a == KEY_BACKSPACE){
             if(strlen(NewpP) > 0){
@@ -556,33 +731,41 @@ void savAtSP(){
         mvwprintw(lwin, 0, 0," %s ", " Where? ");
         wattroff(lwin, COLOR_PAIR(4));
         wmove(lwin, 1, 0);
-        Sprintw(lwin, NEWPath, J, 1);
+        Sprintw(lwin, NEWPath, J, -1);
         refresh();
         
     } while(a != 10);
     scan(NEWPath);
-    if(Mirror(Path, NEWPath) == 0)
-    Warning(sat, NEWPath);
+    if(Mirror(1, Path, NEWPath) == 0){
+        Warning(sat, NEWPath);
+        Change = 0;
+    }
 endf:
     curs_set(2);
     Clearstring(NEWPath);
 }
 
 void saveAt(){
-    edit(410);
-    savAtSP();
-    Change = 0;
+    char ro[100] = {" This is a RO file... "};
+    if(onhelp == false && ReadOnly == false){
+        edit(410);
+        if(onhelp == false)
+        savAtSP();
+    } else
+        Warning(ro, NULL);
 }
 
 void save(){
-    char sa[10] = {" saved "};
-    edit(410);
-    if(UsageMode == Normal){
-        Mirror(Path, RPath);
-        Warning(sa, NULL);
-        Change = 0;
+    char sa[10] = {" saved "}, ro[100] = {" This is a RO file... "};
+    if(onhelp == false && ReadOnly == false){
+        edit(410);
+        if(UsageMode == Normal){
+            Mirror(1, Path, RPath);
+            Warning(sa, NULL);
+            Change = 0;
+        }
     } else
-        saveAt();
+        Warning(ro, NULL);
 }
 
 void fquit(){
@@ -601,20 +784,23 @@ void quit(){
 }
 
 
-void delAfileSP(){
+void delAfileSP(char *filePath){
     char rm[4] = {"rm "}, command[1000];
-    SStr(rm, Path, command);
+    SStr(rm, filePath, command);
     system(command);
 }
 
 void deleteAfile(){
     if(onhelp == false){
-        
-        char name[10] = {"delete?"};
-        if(YesOrNo(name) == 0)
-            delAfileSP();
-        StartUp();
-        Setup();
+        char name[10] = {" delete? "};
+        if(YesOrNo(name) == 0) {
+            Change = 0;
+            delAfileSP(Path);
+            if(UsageMode == Normal)
+                delAfileSP(RPath);
+            Process1();
+            StartUp();
+        }
     }
 }
 
@@ -719,7 +905,9 @@ void Orthographic(int a, char *string){
 dontw:
     wclear(lwin);
     //whline(lwin, 0, getmaxx(stdscr));
-        mvwprintw(lwin,0,0, "[%s]", Path);
+    wmove(lwin,0,0);
+        Sprintw(lwin, Path, 0, -2);
+        //mvwprintw(lwin,0,0, "[%s]", Path);
         mvwprintw(lwin,1,1, "==> %s ", myphrase);
     if(H>0)
         wprintw(lwin, ":");
@@ -736,18 +924,27 @@ dontw:
     wrefresh(win);
 }
 
-void CommandLine(int &lY, int &lX, int &ign){
+void CommandLine(int &lY, int &lX, int &ign, bool recover){
     Orthographic(ERR, NULL);
     static int BkpL[3];
     char Command[100];
     int a = 0;
+    bool recovery = true;
     curs_set(0);
+    if(onhelp == false){
+        BkpL[0] = lY;
+        BkpL[1] = lX;
+        BkpL[2] = ign;
+    }
+    lY = lX = ign = -1;
     wattron(win, A_BOLD);
     mvwprintw(win,getmaxy(stdscr)-3,0,"- MCL -");
     wattroff(win, A_BOLD);
     do{
         if(a == 410){
+            sintax = true;
             edit(410);
+            sintax = false;
         }
         a = wgetch(win);
         Orthographic(a, Command);
@@ -756,26 +953,22 @@ void CommandLine(int &lY, int &lX, int &ign){
     }while(a != 10);
     curs_set(2);
     if(strcmp(Command, "help")==0){
-        if(onhelp == false){
-            BkpL[0] = lY;
-            BkpL[1] = lX;
-            BkpL[2] = ign;
-        }
-        lY = lX = 0;
+        sintax = false;
+        lY = lX = ign = 0;
         help();
         if(onhelp == true){
             ReadOnly = true;
         }
+        recovery = false;
     }
     if(strcmp(Command, "close")==0){
         close2nd();
-        lY = BkpL[0];
-        lX = BkpL[1];
-        ign = BkpL[2];
+        if(onhelp == true)
+            onhelp = false;
     }
     if(strcmp(Command, "delete")==0){
-        lY = lX = ign = 0;
         deleteAfile();
+        recovery = false;
     }
     if(strcmp(Command, "fquit")==0){
         fquit();
@@ -793,21 +986,49 @@ void CommandLine(int &lY, int &lX, int &ign){
         saveAt();
     }
     
+    if(recovery == true){
+        if(onhelp == false){
+            lY = BkpL[0];
+            lX = BkpL[1];
+            ign = BkpL[2];
+            sintax = recover;
+        }
+    }
+    
     if(strcmp(Command, "save")!=0 && strcmp(Command, "quit")!= 0 && strcmp(Command, "save at")!= 0){
         edit(410);
     }
+    
+}
+
+int FOLINE(char mode, char *str){
+    static char Loaded[100000];
+    
+    switch(mode){
+        case 'w':
+            strcpy(Loaded, str);
+            break;
+        case 'g':
+            strcpy(str, Loaded);
+            break;
+        case 'c':
+            Clearstring(Loaded);
+            break;
+        default:
+            break;
+    }
+    return (int)strlen(Loaded);
 }
 
 void editSup(int limit, int a ,int &lY, int &curX, char *line, int allines, int &ign, int &ignchars){
     const char *lb = line;
     char buffer[100000], B2[100000], B3[100000], Line1[100000], Line2[100000], zero[4] = {""};
     char *bp = buffer;
-    Change = 1;
     Clearstring(buffer);
     int b = 0;
     clear();
     
-    if(a != 127 && a != 10){
+    if(a != 127 && a != 10 && a != ERR){
         while (*lb) {
             if(b != curX+ignchars){
                 *bp = *lb;
@@ -832,11 +1053,17 @@ void editSup(int limit, int a ,int &lY, int &curX, char *line, int allines, int 
         else
             ignchars++;
         
-    } else if (a == 127 || a == KEY_BACKSPACE){
+    } else if (a == 127){
         if(lY == 0 && ign > 0){
             es003BS();
             goto end;
         } else if(curX == 0 && lY != 0 && ignchars == 0){
+            FOLINE('c', NULL);
+            {
+                cpstr(line, buffer);
+                scan(buffer);
+                Changeline(lY+ign, buffer, true);
+            }
             cpstr(line, buffer);
                 lY--;
             see(false, lY, B2, allines, ign, 0);
@@ -865,6 +1092,12 @@ void editSup(int limit, int a ,int &lY, int &curX, char *line, int allines, int 
                 curX--;
         }
     } else if(a == 10 || a == '\n'){
+        FOLINE('c', NULL);
+        {
+            cpstr(line, buffer);
+            scan(buffer);
+            Changeline(lY+ign, buffer, true);
+        }
         es002(curX+ignchars, line, Line1, Line2);
         Changeline(lY+ign, Line1, true);
         if(lY + 1 < getmaxy(win))
@@ -883,91 +1116,117 @@ void editSup(int limit, int a ,int &lY, int &curX, char *line, int allines, int 
         }
         curX = 0;
         goto end;
+    } else if(a == ERR){
+        FOLINE('c', NULL);
+        cpstr(line, buffer);
+        Changeline(lY+ign, buffer, true);
+        goto end;
     }
     
     scan(buffer);
-    Changeline(lY+ign, buffer, true);
+    FOLINE('w', buffer);
 end:
     printw("");
 }
 
 void edit(int a){
-    char ex[100000];
-    static int lY = 0, lX = 0,ign = 0, lines = 0, allines, ignchars = 0, igNBug;
+    char ex[100000], extp[100000], exb[100000], NL[4] = {"\n"};
+    static char lastex[100000];
+    static int lY = 0, lX = 0,ign = 0, lines = 0, allines, ignchars = 0, igNBug, lastline, llY, lign, Bline = -1, LChan;
+    int linemv = 0;
+    static bool saveline = false;
+    static bool Firstime = true, ischan = false, canload, isloaded = false;
+   
+    lastline = lY + ign;
+    llY = lY;
+    lign = ign;
+    strcpy(lastex, ex);
+    LChan = Change;
 restart:
     igNBug = ignchars;
-        if(a == KEY_LEFT){
-            if( lX - 1 >= 0)
-                lX--;
-            else if (lY - 1 >= 0 && ignchars == 0){
-                edit(KEY_UP);
-                see(false,lY, ex,allines, ign, 0);
-                scan(ex);
-                if(strlen(ex) < getmaxx(win))
-                    lX = (int)strlen(ex);
-                else{
-                    lX = getmaxx(win) - 1;
-                    ignchars = (int)strlen(ex) - getmaxx(win) + 1;
-                }
-                Clearstring(ex);
-            } else if(strlen(ex) > getmaxx(win) && ignchars > 0){
-                ignchars--;
-            }
-        } else if(a == KEY_RIGHT){
-            if( lX + 1 < getmaxx(win) && lX < strlen(ex))
-                lX++;
-            else if(strlen(ex) > getmaxx(win) && ignchars + getmaxx(win) <= strlen(ex)){
-                ignchars++;
-            }
-            else if(lY + 1 < getmaxy(win) && lY + 1 < lines){
-                lX = 0;
-                edit(KEY_DOWN);
-            }
-        } else if(a == KEY_UP){
-            ignchars = 0;
-            if(lY - 1 >= 0){
-                lY--;
-            } else {
-                if(ign > 0)
-                    ign--;
-            }
-        }  else if(a == KEY_DOWN){
-            ignchars = 0;
-            if(lY + 1 < getmaxy(win) && lY + 1 < lines)
-                lY++;
-            else {
-                if(ign+lines < allines)
-                    ign++;
-            }
-        } else if (a == ERR) {
-            wprintw(win,"ERR");
-        } else if (a == 410) {
-        CLEAR:
-            clear();
-            resize();
-            Meedit(NULL);
-        } else if (a == 27) {
-            //mvwprintw(win,30, 1,"line: %d | coln: %d", lY, lX);
-            CommandLine(lY, lX, ign);
-        } else if (a == 9) {
-            a = ' ';
-            for(int z = 0 ; z < 4 ; z ++){
-            editSup(lines,a, lY,lX, ex, allines, ign,ignchars);
+    if(a == KEY_LEFT){
+        if( lX - 1 >= 0)
+            lX--;
+        else if (lY - 1 >= 0 && ignchars == 0){
+            edit(KEY_UP);
             see(false,lY, ex,allines, ign, 0);
             scan(ex);
+            if(strlen(ex) < getmaxx(win))
+                lX = (int)strlen(ex);
+            else{
+                lX = getmaxx(win) - 1;
+                ignchars = (int)strlen(ex) - getmaxx(win) + 1;
             }
-        }else {
-            if(ReadOnly == false){
-                editSup(lines,a, lY,lX, ex, allines, ign, ignchars);
-                if(a == 10)
-                    ignchars = 0;
-                if(msg == 1){
-                    msg = 0;
-                    goto CLEAR;
-                }
+            Clearstring(ex);
+        } else if(strlen(ex) > getmaxx(win) && ignchars > 0){
+            ignchars--;
+        }
+    } else if(a == KEY_RIGHT){
+        if( lX + 1 < getmaxx(win) && lX < strlen(ex))
+            lX++;
+        else if(strlen(ex) > getmaxx(win) && ignchars + getmaxx(win) <= strlen(ex)){
+            ignchars++;
+        }
+        else if(lY + 1 < getmaxy(win) && lY + 1 < lines){
+            lX = 0;
+            edit(KEY_DOWN);
+        }
+    } else if(a == KEY_UP){
+        ignchars = 0;
+        if(lY - 1 >= 0){
+            lY--;
+        } else {
+            if(ign > 0)
+                ign--;
+        }
+    }  else if(a == KEY_DOWN){
+        ignchars = 0;
+        if(lY + 1 < getmaxy(win) && lY + 1 < lines)
+            lY++;
+        else {
+            if(ign+lines < allines)
+                ign++;
+        }
+    } else if (a == ERR) {
+        //wprintw(win,"ERR");
+    } else if (a == 410) {
+    CLEAR:
+        clear();
+        resize();
+        Meedit(NULL);
+    } else if (a == 27) {
+        static bool recover = false;
+        if(onhelp == false){
+            recover = sintax;
+            sintax = false;
+            FOLINE('g', exb);
+            editSup(lines, ERR, lY ,lX, exb, allines, ign,ignchars);
+        }
+        CommandLine(lY, lX, ign, recover);
+        isloaded = false;
+        if(onhelp == false)
+            sintax = recover;
+    } else if (a == 9) {
+        if(ReadOnly == false && onhelp == false){
+            for(int z = 0 ; z < 3 ; z ++){
+                editSup(lines, ' ', lY,lX, ex, allines, ign,ignchars);
+                FOLINE('g', ex);
             }
         }
-        
+    }else {
+        if(ReadOnly == false && onhelp == false){
+            editSup(lines,a, lY,lX, ex, allines, ign,ignchars);
+            Change = 1;
+            ischan = true;
+            if(a == 10)
+                ignchars = 0;
+            if(msg == 1){
+                msg = 0;
+                goto CLEAR;
+            }
+        }
+    }
+    
     wclear(win);
     
     if(lX < 0)
@@ -975,32 +1234,85 @@ restart:
     if(lY < 0)
         lY = 0;
     
+    if(lastline != lY + ign){
+        linemv = lY+ign - lastline;
+        if(ischan == true && a != 127 && a != 10)
+            saveline = true;
+        else saveline = false;
+        ischan = false;
+        isloaded = false;
+        
+        Bline = -1;
+        canload = true;
+    } else {
+        linemv = 0;
+        canload = false;
+    }
+    
+    wattron(win, COLOR_PAIR(1));
+    wmove(win, 10, 0);
+    
+    //saveline == true && a != 127 && a != 10
+     
+    if(saveline == true && ReadOnly == false && onhelp == false){
+        FOLINE('g', exb);
+        editSup(lines, ERR,  llY ,lX, exb, allines, lign,ignchars);
+        isloaded = false;
+        saveline = false;
+    }
+    
+    wmove(win, 0, 0);
+    wattroff(win, COLOR_PAIR(1));
+    
     //wattron(win, COLOR_PAIR(1));
-    lines = see(true,lY, ex,allines, ign, ignchars);
-    //wattroff(win, COLOR_PAIR(1));
+    if(isloaded == false || ReadOnly == true){
+        Clearstring(ex);
+        lines = see(true,lY, ex,allines, ign, ignchars);
+        canload = true;
+    } else {
+        Clearstring(exb);
+        FOLINE('g', ex);
+        ManageString('c', NULL);
+        ManageString('a', ex);
+        ManageString('a', NL);
+        ManageString('g', extp);
+        ManageString('c', NULL);
+        lines = see(3,Bline, extp,allines, ign, ignchars);
+    }
     scan(ex);
-    
-    if(strlen(ex) < getmaxx(win)){
-        ignchars = 0;
+    //wattroff(win, COLOR_PAIR(1));
+    if(onhelp == false && ReadOnly == false){
+        if(strlen(ex) < getmaxx(win)){
+            ignchars = 0;
+        }
+        
+        if(strlen(ex) < getmaxx(win) && igNBug > 0){
+            if(lX + 1 == getmaxx(win))
+                goto normlX;
+        }
+        
+        if(lX > strlen(ex)){
+        normlX:
+            lX = (int)strlen(ex);
+        }
+        
+        if(canload == true || Firstime == true){
+            FOLINE('w', ex);
+            isloaded = true;
+            Bline = lY;
+            Firstime = false;
+        }
     }
     
-    if(strlen(ex) < getmaxx(win) && igNBug > 0){
-        if(lX + 1 == getmaxx(win))
-            goto normlX;
-    }
-    
-    if(lX > strlen(ex)){
-    normlX:
-        lX = (int)strlen(ex);
-    }
-    
+    //wprintw(win,"\"%d\" -- tabsize", TABSIZE);
     //mvwprintw(win,30, 1,"line: %d | coln: %d", lY,lX);
-    //mvwprintw(win,30, 1,"line: %d<%d | coln: %d | IGN: %d | realine: %d | R.line %d>%d", lY,allines, lX, ign, lY+ign, lines, getmaxy(win));
+    //mvw printw(win,30, 1,"line: %d<%d | coln: %d | IGN: %d | realine: %d | R.line %d>%d", lY,allines, lX, ign, lY+ign, lines, getmaxy(win));
     //wprintw(win,"\"%s\" -- ex", ex);
     //mvwprintw(win,31, 1,"a : %c : %d", a, a);
     wmove(win,lY, lX);
     wrefresh(win);
 }
+
 
 void Setup(){
     int scry, scrx;
@@ -1048,22 +1360,20 @@ void Process1(){
     ManageString('g', buffer);
     ManageString('c', NULL);
     cpstr(buffer, Path);
-    
 }
 
 int StartUp(){
     UsageMode = Newfile;
     int status = 0;
     
-    FILE *test = fopen(Path, "rt");
-    if(test == NULL){
-        fclose(test);
+    FILE *test;
         test = fopen(Path, "wt");
         if(test == NULL){
             printf("\e[1mMeedit:\e[0m \"%s\"not found\n", Path);
             status = 1;
-        }
-    }
+        } else
+            fprintf(test, "%s", " ");
+    
     fclose(test);
     
     return status;
@@ -1085,17 +1395,14 @@ void StartUp2(){
     }
     
     SStr(RPath, unsaved, Path);
-    Mirror(RPath, Path);
+    Mirror(2, RPath, Path);
 }
 
 void end(int exitStatus){
-    char Command[10000], rm[4] = {"rm "};
-    SStr(rm, Path, Command);
-    if(UsageMode == Normal && onhelp == false)
-        system(Command);
+    if(onhelp == false){
+        delAfileSP(Path);
+    }
     endwin();
-    if(UsageMode == Newfile)
-        delAfileSP();
     exit(exitStatus);
 }
 
@@ -1112,6 +1419,12 @@ int main(int agrc, char **argv) {
     init_pair(3, -1, COLOR_RED);
     init_pair(4, -1, COLOR_GREEN);
     init_pair(5, -1, COLOR_WHITE);
+    init_pair(6, COLOR_RED, -1);
+    init_pair(7, COLOR_GREEN, -1);
+    init_pair(8, COLOR_YELLOW, -1);
+    init_pair(9, COLOR_MAGENTA, -1);
+    init_pair(10, COLOR_BLUE, -1);
+    
     Process1();
     UsageMode = Normal;
     
