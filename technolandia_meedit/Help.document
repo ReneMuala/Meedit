@@ -1,6 +1,6 @@
 #this is a READ ONlY (RO) file
 #you cant change it.
-#Meedit 0.1.1 2020.04 beta
+#Meedit 0.2 2020.05 (#3)
 
 TIP: use arrow keys to navegate
 in the doc.
@@ -23,8 +23,14 @@ and manipulate text files.
 + About this version:
 
 As you saw in the beginnig of this
-doc. this the version beta 0.1.1 
-released in 04 2020.
+doc. this the version 0.2 (#3)
+released in 05 2020.
+
+What's new?
+
+==> added FOLINE algorithm (fast operable 
+line)
+Now you can type faster than ever!
 
 + Avaliable commands:
 
