@@ -1,16 +1,16 @@
-* Siga este guia para criar o Meedit em sua máquina.
+* Siga este pequeno guia para criar o Meedit em sua maquina.
 
-NOTA: faça isso depois de instalar o GCC/G++ e ncurses
+NOTA: proceda depois de instalar o GCC/G++, cmake e ncurses.
 
-passo 1: mova a pasta "technolandia_meedit" para a sua pasta home, renomeie-a para ".technolandia_meedit".
+#1 Descarregue o Meedit
 
-exemplo: mv technolandia_meedit ~/.technolandia_meedit
+#2 Abra o terminal e certifique-se de estar na pasta do Meedit
 
-etapa 2: compile "main.cpp" que está na pasta "Meedit", usando o compilador GCC/G++ com os argumentos "-o", "Meedit", "-lncurses".
+#3 digite make [enter]
 
-exemplo: g++ Meedit/main.cpp -o Meedit -lncurses
+Parabens!
+Agora, voce criou com sucesso o Meedit 0.2 em sua maquina 
+Divirta-se!
 
-Parabéns!
-Agora, você criou com sucesso o Meedit 0.1.1 em sua máquina Divirta-se!
+voce pode executa-lo digitando "./Meedit" [enter]
 
-você pode executá-lo digitando "./Meedit"

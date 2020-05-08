@@ -1,16 +1,15 @@
-* Follow these stepts to build Meedit in your machine.
+* Follow this little tutorial to build Meedit in your machine.
 
-NOTE: do that after install GCC/G++ and ncurses
+NOTE: do that after install GCC/G++, cmake and ncurses.
 
-step 1:  move the folder "technolandia_meedit" to your home folder, renaming it to ".technolandia_meedit".
+#1 Download Meedit
 
-e.g.: mv technolandia_meedit ~/.technolandia_meedit
+#2 Open terminal and make sure that you are in Meedit folder
 
-step 2: compile "main.cpp" witch is in the "Meddit" foder, using GCC/G++ compiler with the arguments "-o", "Meedit", "-lncurses".
-
-e.g.: g++ Meedit/main.cpp -o Meedit -lncurses
+#3 type make [enter]
 
 Congratulations!
-Now, you have sucessful created Meedit 0.1.1 in your machine Have fun!
+Now, you have sucessful created Meedit 0.2 in your machine 
+Have fun!
 
-you can run it by typing "./Meedit"
+you can run it by typing "./Meedit" [enter]

@@ -5,12 +5,11 @@ simple text files.
 
 + About this version:
 
-this is the version beta 
-0.1.1.
+this is the version 0.2
 
-version features:
-in this version, you can create, modify, 
-save and delete text files.
+New features:
+==> incremented typing velocity
+==> syntax in chars
 
 + Avaliable commands:
 
@@ -24,7 +23,7 @@ opens this RO document.
 
 ==> close:
 closes the current document. If all 
-docs are closed, closesthe program.
+docs are closed, closes the program.
 
 ==> save:
 saves the document. If the doc.
@@ -32,7 +31,8 @@ in case is a RO file, does noting.
 
 ==> save at:
 saves the document in a specified 
-name or path.
+name or path. does the same as "save"
+if the doc is RO.
 
 ==> quit:
 closes the program if everything is 
@@ -63,8 +63,10 @@ to report us. Thanks!
 # How to get 
 to get meedit you need to have:
 * GCC/G++ compiler 
+* cmake
 * ncurses library
 
 Then follow the steps in "how_to_get.txt".
 
-- > abra "README_Pt.md" para ver este arquivo em português.
+- > abra "README_Pt.md" para ver este arquivo em portugues.
+

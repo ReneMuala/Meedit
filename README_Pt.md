@@ -6,11 +6,11 @@ arquivos de texto simples.
 + Sobre esta versão:
 
 esta é a versão beta
-0.1.1.
+0.2
 
-recursos da versão:
-nesta versão, você pode criar, modificar,
-salvar e excluir arquivos de texto.
+Novos recursos:
+==> velocidade de escrita incrementada
+==> sintaxe em caracteres
 
 + Comandos disponíveis:
 
@@ -28,12 +28,13 @@ se todos documentos estiverem fechados,
 fecha o programa.
 
 ==> save:
-salva o documento. Se o doc.
-no caso é um arquivo RO, não faz nada.
+salva o documento. caso o doc seja
+um arquivo RO, não faz nada.
 
 ==> save at:
 salva o documento em um nome ou 
-caminho especificado.
+caminho especificado. caso o doc seja
+um arquivo RO, faz o mesmo que "save".
 
 ==> quit:
 fecha o programa se tudo estiver bem.
@@ -58,6 +59,7 @@ ID dos criadores.
 # Como obter
 Para obter o meedit, você precisa ter:
 * Compilador GCC/G++
+* cmake
 * biblioteca ncurses
 
 siga as etapas em "como_obter.txt".
